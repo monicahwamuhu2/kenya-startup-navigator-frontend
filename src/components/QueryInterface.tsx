@@ -52,7 +52,9 @@ export default function QueryInterface() {
     setIsLoading(true)
 
     try {
-      const response = await fetch('http://127.0.0.1:8000/api/v1/query', {
+      // Use environment variable for API URL
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000'
+      const response = await fetch(`${apiUrl}/api/v1/query`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -78,7 +80,7 @@ export default function QueryInterface() {
 
       setMessages(prev => [...prev, aiMessage])
 
-    } catch (error) {
+    } catch {
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
         type: 'ai',
@@ -180,7 +182,7 @@ export default function QueryInterface() {
                       Kenya Startup Navigator
                     </h1>
                     <p className="text-gray-600 text-sm">
-                      AI-powered guidance for East Africa's startup ecosystem
+                      AI-powered guidance for East Africa&apos;s startup ecosystem
                     </p>
                   </div>
                 </div>
@@ -218,10 +220,10 @@ export default function QueryInterface() {
                     
                     <div className="mb-6">
                       <h2 className="text-3xl font-bold text-gray-900 mb-4">
-                        Welcome to Kenya's Startup Ecosystem
+                        Welcome to Kenya&apos;s Startup Ecosystem
                       </h2>
                       <p className="text-gray-700 text-lg leading-relaxed max-w-2xl mx-auto">
-                        Your intelligent guide to navigating Kenya's vibrant startup landscape. 
+                        Your intelligent guide to navigating Kenya&apos;s vibrant startup landscape. 
                         Get expert insights on funding, accelerators, regulations, and market opportunities.
                       </p>
                     </div>
@@ -407,7 +409,7 @@ export default function QueryInterface() {
                         ))}
                       </div>
                       <span className="text-gray-600 text-sm">
-                        Analyzing Kenya's startup ecosystem...
+                        Analyzing Kenya&apos;s startup ecosystem...
                       </span>
                     </div>
                   </div>
@@ -432,7 +434,7 @@ export default function QueryInterface() {
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
                 onKeyPress={handleKeyPress}
-                placeholder="Ask me about Kenya's startup ecosystem, funding opportunities, regulations..."
+                placeholder="Ask me about Kenya&apos;s startup ecosystem, funding opportunities, regulations..."
                 className="w-full resize-none rounded-xl border-2 border-gray-200 bg-white/80 backdrop-blur-sm px-4 py-4 pr-16 text-gray-900 placeholder-gray-500 focus:border-blue-500 focus:outline-none focus:ring-4 focus:ring-blue-100 min-h-[60px] max-h-[200px] transition-all duration-200 shadow-sm"
                 rows={1}
                 disabled={isLoading}
