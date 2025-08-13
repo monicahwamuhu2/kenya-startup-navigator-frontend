@@ -52,8 +52,11 @@ export default function QueryInterface() {
     setIsLoading(true)
 
     try {
-      // Use environment variable for API URL
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000'
+      // Use your Render backend URL
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://startup-navigator-backend-new.onrender.com'
+      
+      console.log('Making request to:', `${apiUrl}/api/v1/query`) // Debug log
+      
       const response = await fetch(`${apiUrl}/api/v1/query`, {
         method: 'POST',
         headers: {
@@ -62,11 +65,14 @@ export default function QueryInterface() {
         body: JSON.stringify({ question })
       })
 
+      console.log('Response status:', response.status) // Debug log
+
       if (!response.ok) {
-        throw new Error('Failed to get response')
+        throw new Error(`HTTP error! status: ${response.status}`)
       }
 
       const data: QueryResponse = await response.json()
+      console.log('Response data:', data) // Debug log
 
       const aiMessage: Message = {
         id: (Date.now() + 1).toString(),
@@ -80,11 +86,13 @@ export default function QueryInterface() {
 
       setMessages(prev => [...prev, aiMessage])
 
-    } catch {
+    } catch (error) {
+      console.error('API Error:', error) // Debug log
+      
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
         type: 'ai',
-        content: 'I apologize, but I encountered an error processing your question. Please try again.',
+        content: `I apologize, but I encountered an error connecting to the AI service. Please try again in a moment. Error: ${error instanceof Error ? error.message : 'Unknown error'}`,
         timestamp: new Date()
       }
       setMessages(prev => [...prev, errorMessage])
@@ -108,11 +116,11 @@ export default function QueryInterface() {
     "What are the legal requirements for fintech in Kenya?"
   ]
 
-  // Africa Map SVG Component
+  // Africa Map SVG Component - Optimized for mobile
   const AfricaMap = () => (
     <svg
       viewBox="0 0 1000 1000"
-      className="absolute inset-0 w-full h-full opacity-5"
+      className="absolute inset-0 w-full h-full opacity-3 sm:opacity-5"
       preserveAspectRatio="xMidYMid slice"
     >
       {/* Simplified Africa outline */}
@@ -123,7 +131,7 @@ export default function QueryInterface() {
         strokeWidth="2"
       />
       
-      {/* Kenya highlighted */}
+      {/* Kenya highlighted - Smaller on mobile */}
       <circle
         cx="650"
         cy="450"
@@ -161,39 +169,41 @@ export default function QueryInterface() {
 
       <div className="relative z-10 flex flex-col h-screen">
         
-        {/* Professional Header */}
+        {/* Mobile-Responsive Header */}
         <motion.header 
           initial={{ y: -100, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           className="bg-white/90 backdrop-blur-xl border-b border-gray-200/50 shadow-lg"
         >
-          <div className="max-w-6xl mx-auto px-6 py-4">
+          <div className="max-w-6xl mx-auto px-3 sm:px-6 py-3 sm:py-4">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <div className="flex items-center gap-3">
-                  {/* Kenya Flag Colors */}
-                  <div className="flex gap-1">
-                    <div className="w-2 h-8 bg-black rounded-sm"></div>
-                    <div className="w-2 h-8 bg-red-600 rounded-sm"></div>
-                    <div className="w-2 h-8 bg-green-600 rounded-sm"></div>
+              <div className="flex items-center gap-2 sm:gap-4">
+                <div className="flex items-center gap-2 sm:gap-3">
+                  {/* Kenya Flag Colors - Responsive sizing */}
+                  <div className="flex gap-0.5 sm:gap-1">
+                    <div className="w-1.5 sm:w-2 h-6 sm:h-8 bg-black rounded-sm"></div>
+                    <div className="w-1.5 sm:w-2 h-6 sm:h-8 bg-red-600 rounded-sm"></div>
+                    <div className="w-1.5 sm:w-2 h-6 sm:h-8 bg-green-600 rounded-sm"></div>
                   </div>
                   <div>
-                    <h1 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
+                    <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
                       Kenya Startup Navigator
                     </h1>
-                    <p className="text-gray-600 text-sm">
+                    <p className="text-gray-600 text-xs sm:text-sm hidden sm:block">
                       AI-powered guidance for East Africa&apos;s startup ecosystem
                     </p>
                   </div>
                 </div>
               </div>
               
-              <div className="hidden md:flex items-center gap-6">
-                <div className="flex items-center gap-2 bg-green-100 text-green-800 rounded-full px-3 py-1 text-sm font-medium">
-                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                  AI Online
+              {/* Mobile-optimized status indicators */}
+              <div className="flex items-center gap-2 sm:gap-6">
+                <div className="flex items-center gap-1 sm:gap-2 bg-green-100 text-green-800 rounded-full px-2 sm:px-3 py-1 text-xs sm:text-sm font-medium">
+                  <div className="w-1.5 sm:w-2 h-1.5 sm:h-2 bg-green-500 rounded-full animate-pulse"></div>
+                  <span className="hidden sm:inline">AI Online</span>
+                  <span className="sm:hidden">AI</span>
                 </div>
-                <div className="text-sm text-gray-600 font-medium">
+                <div className="text-xs sm:text-sm text-gray-600 font-medium hidden md:block">
                   Powered by Groq AI
                 </div>
               </div>
@@ -201,39 +211,40 @@ export default function QueryInterface() {
           </div>
         </motion.header>
 
-        {/* Messages Area */}
+        {/* Messages Area - Mobile optimized */}
         <div className="flex-1 overflow-hidden relative">
-          <div className="h-full overflow-y-auto p-6">
-            <div className="max-w-4xl mx-auto space-y-6">
+          <div className="h-full overflow-y-auto p-2 sm:p-4 lg:p-6">
+            <div className="max-w-4xl mx-auto space-y-4 sm:space-y-6">
               
-              {/* Welcome Card */}
+              {/* Welcome Card - Mobile responsive */}
               {messages.length === 0 && (
                 <motion.div
                   initial={{ opacity: 0, scale: 0.95, y: 20 }}
                   animate={{ opacity: 1, scale: 1, y: 0 }}
-                  className="text-center py-8"
+                  className="text-center py-4 sm:py-8"
                 >
-                  <div className="bg-white/80 backdrop-blur-xl rounded-2xl p-8 shadow-xl border border-white/50 relative overflow-hidden">
+                  <div className="bg-white/80 backdrop-blur-xl rounded-xl sm:rounded-2xl p-4 sm:p-6 lg:p-8 shadow-xl border border-white/50 relative overflow-hidden">
                     
-                    {/* Subtle decorative elements */}
+                    {/* Decorative stripe */}
                     <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-red-500 via-black to-green-500"></div>
                     
-                    <div className="mb-6">
-                      <h2 className="text-3xl font-bold text-gray-900 mb-4">
+                    <div className="mb-4 sm:mb-6">
+                      <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-2 sm:mb-4">
                         Welcome to Kenya&apos;s Startup Ecosystem
                       </h2>
-                      <p className="text-gray-700 text-lg leading-relaxed max-w-2xl mx-auto">
+                      <p className="text-gray-700 text-sm sm:text-base lg:text-lg leading-relaxed max-w-2xl mx-auto">
                         Your intelligent guide to navigating Kenya&apos;s vibrant startup landscape. 
                         Get expert insights on funding, accelerators, regulations, and market opportunities.
                       </p>
                     </div>
                     
-                    <div className="space-y-4">
-                      <p className="text-sm font-semibold text-gray-800 mb-4">
+                    <div className="space-y-3 sm:space-y-4">
+                      <p className="text-xs sm:text-sm font-semibold text-gray-800 mb-3 sm:mb-4">
                         Popular startup questions:
                       </p>
                       
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      {/* Mobile-first grid layout */}
+                      <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 sm:gap-3">
                         {suggestedQuestions.map((question, index) => (
                           <motion.button
                             key={index}
@@ -243,10 +254,10 @@ export default function QueryInterface() {
                             onClick={() => handleSubmit(question)}
                             whileHover={{ scale: 1.02 }}
                             whileTap={{ scale: 0.98 }}
-                            className="group text-left p-4 bg-white/60 hover:bg-white/80 rounded-xl text-sm text-gray-800 transition-all duration-300 border border-gray-200/50 hover:border-gray-300 shadow-sm hover:shadow-md backdrop-blur-sm"
+                            className="group text-left p-3 sm:p-4 bg-white/60 hover:bg-white/80 rounded-lg sm:rounded-xl text-xs sm:text-sm text-gray-800 transition-all duration-300 border border-gray-200/50 hover:border-gray-300 shadow-sm hover:shadow-md backdrop-blur-sm"
                           >
-                            <div className="flex items-start gap-3">
-                              <div className="w-2 h-2 bg-red-500 rounded-full mt-2 group-hover:scale-125 transition-transform duration-200"></div>
+                            <div className="flex items-start gap-2 sm:gap-3">
+                              <div className="w-1.5 sm:w-2 h-1.5 sm:h-2 bg-red-500 rounded-full mt-2 group-hover:scale-125 transition-transform duration-200 flex-shrink-0"></div>
                               <span className="flex-1 leading-relaxed">
                                 {question}
                               </span>
@@ -259,7 +270,7 @@ export default function QueryInterface() {
                 </motion.div>
               )}
 
-              {/* Message Bubbles */}
+              {/* Message Bubbles - Mobile responsive */}
               <AnimatePresence>
                 {messages.map((message, index) => (
                   <motion.div
@@ -270,58 +281,58 @@ export default function QueryInterface() {
                     transition={{ delay: index * 0.1 }}
                     className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}
                   >
-                    <div className={`max-w-3xl relative ${message.type === 'user' ? 'ml-12' : 'mr-12'}`}>
+                    <div className={`max-w-[90%] sm:max-w-3xl relative ${message.type === 'user' ? 'ml-4 sm:ml-12' : 'mr-4 sm:mr-12'}`}>
                       
-                      {/* User Message */}
+                      {/* User Message - Mobile optimized */}
                       {message.type === 'user' ? (
-                        <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-2xl rounded-br-md p-4 shadow-lg">
-                          <div className="whitespace-pre-wrap leading-relaxed">{message.content}</div>
+                        <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-2xl rounded-br-md p-3 sm:p-4 shadow-lg">
+                          <div className="whitespace-pre-wrap leading-relaxed text-sm sm:text-base">{message.content}</div>
                           <div className="text-blue-100 text-xs mt-2 opacity-75">
                             {message.timestamp.toLocaleTimeString()}
                           </div>
                         </div>
                       ) : (
-                        /* AI Message */
-                        <div className="bg-white/90 backdrop-blur-xl border border-gray-200/50 rounded-2xl rounded-bl-md p-6 shadow-lg relative">
+                        /* AI Message - Mobile responsive */
+                        <div className="bg-white/90 backdrop-blur-xl border border-gray-200/50 rounded-2xl rounded-bl-md p-4 sm:p-6 shadow-lg relative">
                           
-                          {/* AI Indicator */}
-                          <div className="absolute -top-2 -left-2 w-8 h-8 bg-gradient-to-r from-red-500 to-green-500 rounded-full flex items-center justify-center shadow-md">
-                            <div className="w-4 h-4 bg-white rounded-full flex items-center justify-center">
-                              <div className="w-2 h-2 bg-gray-800 rounded-full"></div>
+                          {/* AI Indicator - Responsive sizing */}
+                          <div className="absolute -top-2 -left-2 w-6 sm:w-8 h-6 sm:h-8 bg-gradient-to-r from-red-500 to-green-500 rounded-full flex items-center justify-center shadow-md">
+                            <div className="w-3 sm:w-4 h-3 sm:h-4 bg-white rounded-full flex items-center justify-center">
+                              <div className="w-1.5 sm:w-2 h-1.5 sm:h-2 bg-gray-800 rounded-full"></div>
                             </div>
                           </div>
                           
-                          <div className="ml-2">
-                            <div className="whitespace-pre-wrap text-gray-800 leading-relaxed">
+                          <div className="ml-1 sm:ml-2">
+                            <div className="whitespace-pre-wrap text-gray-800 leading-relaxed text-sm sm:text-base">
                               {message.content}
                             </div>
                             
-                            {/* AI Metadata */}
+                            {/* AI Metadata - Mobile responsive */}
                             {message.type === 'ai' && (
-                              <div className="mt-6 space-y-4">
+                              <div className="mt-4 sm:mt-6 space-y-3 sm:space-y-4">
                                 
-                                {/* Confidence Score */}
+                                {/* Confidence Score - Mobile friendly */}
                                 {message.confidence && (
-                                  <div className="flex items-center gap-3">
-                                    <span className="text-sm font-medium text-gray-600">Confidence:</span>
-                                    <div className="flex-1 bg-gray-200 rounded-full h-2 overflow-hidden">
+                                  <div className="flex items-center gap-2 sm:gap-3">
+                                    <span className="text-xs sm:text-sm font-medium text-gray-600 flex-shrink-0">Confidence:</span>
+                                    <div className="flex-1 bg-gray-200 rounded-full h-1.5 sm:h-2 overflow-hidden">
                                       <motion.div 
                                         initial={{ width: 0 }}
                                         animate={{ width: `${message.confidence * 100}%` }}
                                         transition={{ delay: 0.5, duration: 1, ease: "easeOut" }}
-                                        className="bg-gradient-to-r from-green-500 to-green-600 h-2 rounded-full"
+                                        className="bg-gradient-to-r from-green-500 to-green-600 h-1.5 sm:h-2 rounded-full"
                                       />
                                     </div>
-                                    <span className="text-sm font-semibold text-green-700">
+                                    <span className="text-xs sm:text-sm font-semibold text-green-700 flex-shrink-0">
                                       {Math.round(message.confidence * 100)}%
                                     </span>
                                   </div>
                                 )}
 
-                                {/* Sources */}
+                                {/* Sources - Mobile responsive */}
                                 {message.sources && message.sources.length > 0 && (
-                                  <div className="flex items-start gap-2">
-                                    <span className="text-sm font-medium text-gray-600">Sources:</span>
+                                  <div className="flex flex-col sm:flex-row sm:items-start gap-1 sm:gap-2">
+                                    <span className="text-xs sm:text-sm font-medium text-gray-600 flex-shrink-0">Sources:</span>
                                     <div className="flex flex-wrap gap-1">
                                       {message.sources.map((source, idx) => (
                                         <span key={idx} className="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded-md border">
@@ -332,10 +343,10 @@ export default function QueryInterface() {
                                   </div>
                                 )}
 
-                                {/* Follow-up Questions */}
+                                {/* Follow-up Questions - Mobile optimized */}
                                 {message.followUps && message.followUps.length > 0 && (
-                                  <div className="space-y-3">
-                                    <p className="text-sm font-medium text-gray-700">
+                                  <div className="space-y-2 sm:space-y-3">
+                                    <p className="text-xs sm:text-sm font-medium text-gray-700">
                                       Related questions:
                                     </p>
                                     <div className="space-y-2">
@@ -348,11 +359,11 @@ export default function QueryInterface() {
                                           onClick={() => handleSubmit(followUp)}
                                           whileHover={{ scale: 1.01 }}
                                           whileTap={{ scale: 0.99 }}
-                                          className="block w-full text-left text-sm p-3 bg-gray-50 hover:bg-gray-100 rounded-lg text-gray-700 transition-all duration-200 border border-gray-200 hover:border-gray-300"
+                                          className="block w-full text-left text-xs sm:text-sm p-2 sm:p-3 bg-gray-50 hover:bg-gray-100 rounded-lg text-gray-700 transition-all duration-200 border border-gray-200 hover:border-gray-300"
                                         >
                                           <div className="flex items-start gap-2">
-                                            <div className="w-1.5 h-1.5 bg-blue-500 rounded-full mt-2"></div>
-                                            <span>{followUp}</span>
+                                            <div className="w-1 sm:w-1.5 h-1 sm:h-1.5 bg-blue-500 rounded-full mt-1.5 sm:mt-2 flex-shrink-0"></div>
+                                            <span className="leading-relaxed">{followUp}</span>
                                           </div>
                                         </motion.button>
                                       ))}
@@ -362,7 +373,7 @@ export default function QueryInterface() {
                               </div>
                             )}
                             
-                            <div className="text-gray-400 text-xs mt-4">
+                            <div className="text-gray-400 text-xs mt-3 sm:mt-4">
                               {message.timestamp.toLocaleTimeString()}
                             </div>
                           </div>
@@ -373,29 +384,29 @@ export default function QueryInterface() {
                 ))}
               </AnimatePresence>
 
-              {/* Loading Indicator */}
+              {/* Loading Indicator - Mobile responsive */}
               {isLoading && (
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="flex justify-start mr-12"
+                  className="flex justify-start mr-4 sm:mr-12"
                 >
-                  <div className="bg-white/90 backdrop-blur-xl border border-gray-200/50 rounded-2xl rounded-bl-md p-6 shadow-lg relative">
-                    <div className="absolute -top-2 -left-2 w-8 h-8 bg-gradient-to-r from-red-500 to-green-500 rounded-full flex items-center justify-center shadow-md">
-                      <div className="w-4 h-4 bg-white rounded-full flex items-center justify-center">
+                  <div className="bg-white/90 backdrop-blur-xl border border-gray-200/50 rounded-2xl rounded-bl-md p-4 sm:p-6 shadow-lg relative">
+                    <div className="absolute -top-2 -left-2 w-6 sm:w-8 h-6 sm:h-8 bg-gradient-to-r from-red-500 to-green-500 rounded-full flex items-center justify-center shadow-md">
+                      <div className="w-3 sm:w-4 h-3 sm:h-4 bg-white rounded-full flex items-center justify-center">
                         <motion.div 
-                          className="w-2 h-2 bg-gray-800 rounded-full"
+                          className="w-1.5 sm:w-2 h-1.5 sm:h-2 bg-gray-800 rounded-full"
                           animate={{ scale: [1, 1.3, 1] }}
                           transition={{ duration: 1, repeat: Infinity }}
                         />
                       </div>
                     </div>
-                    <div className="ml-2 flex items-center gap-3">
+                    <div className="ml-1 sm:ml-2 flex items-center gap-2 sm:gap-3">
                       <div className="flex gap-1">
                         {[0, 1, 2].map((i) => (
                           <motion.div
                             key={i}
-                            className="w-2 h-2 bg-gray-400 rounded-full"
+                            className="w-1.5 sm:w-2 h-1.5 sm:h-2 bg-gray-400 rounded-full"
                             animate={{ 
                               scale: [1, 1.5, 1],
                               opacity: [0.5, 1, 0.5]
@@ -408,8 +419,9 @@ export default function QueryInterface() {
                           />
                         ))}
                       </div>
-                      <span className="text-gray-600 text-sm">
-                        Analyzing Kenya&apos;s startup ecosystem...
+                      <span className="text-gray-600 text-xs sm:text-sm">
+                        <span className="hidden sm:inline">Analyzing Kenya&apos;s startup ecosystem...</span>
+                        <span className="sm:hidden">Analyzing...</span>
                       </span>
                     </div>
                   </div>
@@ -421,21 +433,21 @@ export default function QueryInterface() {
           </div>
         </div>
 
-        {/* Input Area */}
+        {/* Input Area - Mobile optimized */}
         <motion.div 
           initial={{ y: 100, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           className="bg-white/90 backdrop-blur-xl border-t border-gray-200/50 shadow-lg"
         >
-          <div className="max-w-4xl mx-auto p-6">
+          <div className="max-w-4xl mx-auto p-3 sm:p-4 lg:p-6">
             <div className="relative">
               <textarea
                 ref={textareaRef}
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
                 onKeyPress={handleKeyPress}
-                placeholder="Ask me about Kenya&apos;s startup ecosystem, funding opportunities, regulations..."
-                className="w-full resize-none rounded-xl border-2 border-gray-200 bg-white/80 backdrop-blur-sm px-4 py-4 pr-16 text-gray-900 placeholder-gray-500 focus:border-blue-500 focus:outline-none focus:ring-4 focus:ring-blue-100 min-h-[60px] max-h-[200px] transition-all duration-200 shadow-sm"
+                placeholder="Ask me about Kenya's startup ecosystem, funding opportunities, regulations..."
+                className="w-full resize-none rounded-lg sm:rounded-xl border-2 border-gray-200 bg-white/80 backdrop-blur-sm px-3 sm:px-4 py-3 sm:py-4 pr-12 sm:pr-16 text-sm sm:text-base text-gray-900 placeholder-gray-500 focus:border-blue-500 focus:outline-none focus:ring-4 focus:ring-blue-100 min-h-[50px] sm:min-h-[60px] max-h-[120px] sm:max-h-[200px] transition-all duration-200 shadow-sm"
                 rows={1}
                 disabled={isLoading}
               />
@@ -445,17 +457,17 @@ export default function QueryInterface() {
                 disabled={!inputValue.trim() || isLoading}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="absolute bottom-3 right-3 flex items-center justify-center w-10 h-10 rounded-lg bg-gradient-to-r from-blue-600 to-blue-700 text-white hover:from-blue-700 hover:to-blue-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-md hover:shadow-lg"
+                className="absolute bottom-2 sm:bottom-3 right-2 sm:right-3 flex items-center justify-center w-8 sm:w-10 h-8 sm:h-10 rounded-lg bg-gradient-to-r from-blue-600 to-blue-700 text-white hover:from-blue-700 hover:to-blue-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-md hover:shadow-lg"
               >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 sm:w-5 h-4 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
                 </svg>
               </motion.button>
             </div>
             
-            <div className="flex items-center justify-between mt-3 text-sm text-gray-600">
-              <span>Press Enter to send, Shift+Enter for new line</span>
-              <span className="font-medium">Powered by Groq AI</span>
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mt-2 sm:mt-3 text-xs sm:text-sm text-gray-600 gap-1 sm:gap-0">
+              <span className="order-2 sm:order-1">Press Enter to send, Shift+Enter for new line</span>
+              <span className="font-medium order-1 sm:order-2">Powered by Groq AI</span>
             </div>
           </div>
         </motion.div>
